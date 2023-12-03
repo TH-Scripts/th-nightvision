@@ -12,3 +12,5 @@ Indsæt dette i din data/items.lua under ox_inventory
     }
 },
 
+#####
+Samtidig placer logo'et fra img/nightvision.png, og placer det inde i web/img inde under ox_inventory
