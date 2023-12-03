@@ -1,6 +1,5 @@
 ESX = exports["es_extended"]:getSharedObject()
 
-
 RegisterNetEvent('th-nightvision:giveHelmetBack', function()
     exports.ox_inventory:AddItem(1, 'nightvision', 1)
 end)

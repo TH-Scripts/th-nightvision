@@ -1,9 +1,14 @@
 ESX = exports["es_extended"]:getSharedObject()
 
+helmetUsed = nil
+
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
 	ESX.PlayerData = xPlayer
 	ESX.PlayerLoaded = true
+    SetSeethrough(false)
+    SetNightvision(false)
+    helmetUsed = false
 end)
 
 RegisterNetEvent('esx:setJob')
@@ -60,30 +65,50 @@ RegisterKeyMapping(Config.removeCommand, 'Fjern nightvision hjelm', 'keyboard', 
 
 RegisterCommand(Config.removeCommand, function()
     local playerPed = PlayerPedId()
-    ESX.TriggerServerCallback('th-nightvision:hasHelmet', function(hasHelmet)
-        if not hasHelmet then
-            animHelmetFlipUp()
-            Wait(500)
-            SetSeethrough(false)
-            SetPedPropIndex(playerPed, 0, 117, 
-            1, true)
-            SetNightvision(false)
-            animHelmetOff()
-            Wait(800)
-            TriggerServerEvent('th-nightvision:giveHelmetBack')
-            clearPedProp()
-        else
-            animHelmetFlipUp()
-            Wait(500)
-            SetSeethrough(false)
-            SetPedPropIndex(playerPed, 0, 117, 
-            1, true)
-            SetNightvision(false)
-            animHelmetOff()
-            Wait(800)
-            clearPedProp()
-        end
-    end)
+    if helmetUsed then
+        ESX.TriggerServerCallback('th-nightvision:hasHelmet', function(hasHelmet)
+            if not hasHelmet then
+                animHelmetFlipUp()
+                Wait(500)
+                SetSeethrough(false)
+                SetPedPropIndex(playerPed, 0, 117, 
+                1, true)
+                SetNightvision(false)
+                animHelmetOff()
+                Wait(800)
+                TriggerServerEvent('th-nightvision:giveHelmetBack')
+                clearPedProp()
+                helmetUsed = false
+            else
+                animHelmetFlipUp()
+                Wait(500)
+                SetSeethrough(false)
+                SetPedPropIndex(playerPed, 0, 117, 
+                1, true)
+                SetNightvision(false)
+                animHelmetOff()
+                Wait(800)
+                clearPedProp()
+                helmetUsed = false
+            end
+        end)
+    else
+        lib.notify({
+            id = 'police_nohelmet',
+            title = 'Politi - Nightvision',
+            description = 'Ingen nightvision hjelm på!',
+            position = 'top',
+            style = {
+                backgroundColor = '#141517',
+                color = '#C1C2C5',
+                ['.description'] = {
+                color = '#909296'
+                }
+            },
+            icon = 'circle-xmark',
+            iconColor = '#C53030'
+        })
+    end
 end)
 
 
@@ -94,6 +119,7 @@ exports('nightvision', function(data, slot)
         Wait(800)
         TriggerEvent('th-nightvision:menu')
         TriggerServerEvent('th-nightvision:removeHelmet')
+        helmetUsed = true
     else
         lib.notify({
             id = 'police_fail',
